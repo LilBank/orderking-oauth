@@ -1,12 +1,10 @@
-require('dotenv').config()
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var passport = require('passport')
-var FacebookStrategy = require('passport-facebook').Strategy;
 var indexRouter = require('./routes/index');
+var oauthRouter = require('./routes/oauth')
 
 var app = express();
 
@@ -20,21 +18,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: "http://localhost:3000/auth/facebook/callback"
-},
-function(accessToken, refreshToken, profile, done) {
-  console.log(profile)
-}
-));
-
-app.get('/auth/facebook', passport.authenticate('facebook'));
-app.get('/auth/facebook/callback',passport.authenticate('facebook', { successRedirect: '/',failureRedirect: '/login' }));
-
 app.use('/', indexRouter);
+app.use('/oauth',oauthRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
