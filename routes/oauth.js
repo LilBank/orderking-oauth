@@ -1,6 +1,7 @@
+require('dotenv').config();
 var express = require('express');
 var router = express.Router();
-var passport = require('passport')
+var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 passport.use(new FacebookStrategy({
