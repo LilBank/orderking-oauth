@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var nodemailer = require('nodemailer');
+var axios = require('axios');
 
 var transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -10,12 +11,12 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-function sendOTP(recipient){
+function sendOTP(recipient,message){
     const mailOptions = {
-        from: 'orderking.buzzfreeze@gmail.com', // sender address
-        to: recipient, // list of receivers
-        subject: 'OTP test', // Subject line
-        html: '<p>Just to make sure ...</p>'// plain text body
+        from: 'orderking.buzzfreeze@gmail.com',
+        to: recipient,
+        subject: 'OTP test',
+        html: '<p>'+message+'<p>'
     };
     transporter.sendMail(mailOptions, function (err, info) {
         if(err)
@@ -25,18 +26,21 @@ function sendOTP(recipient){
     });
 }
 
-router.get('/:email/user', function(req, res, next) { 
-    sendOTP(req.params.email);
+router.get('/password/:userId/recipient/:email', function(req, res, next) { 
+    axios.get('http://128.199.204.164:7868/users/'+req.params.userId).then(response => {
+        sendOTP(req.params.email,JSON.stringify(response.data.password));
+    }).catch(error => {
+        console.log(error);
+    });
     res.send(res.statusCode);
 });
 
-router.get('/:email/driver', function(req, res, next) { 
-    sendOTP(req.params.email);
-    res.send(res.statusCode);
-});
-
-router.get('/:email/restaurant', function(req, res, next) { 
-    sendOTP(req.params.email);
+router.get('/passcode/:userId/recipient/:email', function(req, res, next) { 
+    axios.get('http://128.199.204.164:7868/groups/'+req.params.userId).then(response => {
+        sendOTP(req.params.email,JSON.stringify(response.data.passlock));
+    }).catch(error => {
+        console.log(error);
+    });
     res.send(res.statusCode);
 });
 
