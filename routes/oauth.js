@@ -7,7 +7,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:3000/oauth/auth/facebook/callback"
+    callbackURL: "https://orderking-oauth-mock.herokuapp.com/oauth/auth/facebook/callback"
 },
 function(accessToken, refreshToken, profile, done) {
     console.log(profile)
